@@ -35,30 +35,24 @@ export default {
 
       // *********************登录******************************
 
-      this.axios.post("/user/login", {
-        userName: this.username,
-        userPasswd: newPass
+      this.axios.post("http://localhost:3000/users/login", {
+        name: this.username,
+        pwd: newPass
       })
       .then((res) => {
         console.log(res)
-        if(res.data.code == "success") {
+        if(res.data.code == "200") {
 
           // 保存token
           var token = res.data.data.token;
-          var validateId = res.data.data.validateId;
-          sessionStorage.setItem("validateId",validateId);
           sessionStorage.setItem("token", token);
-
-
-          sessionStorage.setItem('userId',res.data.data.user.userId);
-          sessionStorage.setItem('userName',res.data.data.user.userName);
-          sessionStorage.setItem('userRole',res.data.data.user.roles[0].roleName);
+          sessionStorage.setItem('userId',res.data.data.userId);
 
 
           //获取参数（未登录时想访问的路由）
           var url = this.$route.query.redirect;
 
-          url = url ? url : "/home/house"
+          url = url ? url : "/home"
           // 切换路由
           this.$router.replace(url)
         } else {
