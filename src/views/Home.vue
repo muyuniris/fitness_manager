@@ -31,49 +31,38 @@
             <el-menu-item-group>
               <el-menu-item index="/home/host">教练档案</el-menu-item>
             </el-menu-item-group>
+            <el-menu-item-group>
+              <el-menu-item index="/home/host">课程档案</el-menu-item>
+            </el-menu-item-group>
+            <el-menu-item-group>
+              <el-menu-item index="/home/host">场地档案</el-menu-item>
+            </el-menu-item-group>
           </el-submenu>
           <el-submenu index="2">
             <template slot="title">
               <i class="el-icon-brush"></i>
-              <span slot="title">物业管理</span>
+              <span slot="title">预约管理</span>
             </template>
-            <el-submenu index="1-2">
-              <span slot="title">报修管理</span>
-              <el-menu-item index="/home/fix">报修部位</el-menu-item>
-              <el-menu-item index="/home/fixMsg">报修信息</el-menu-item>
-            </el-submenu>
-            <el-submenu index="1-3">
-              <span slot="title">家政管理</span>
-
-              <el-menu-item index="/home/cleanMsg">家政信息</el-menu-item>
-
-            </el-submenu>
-            <el-submenu index="1-4">
-              <span slot="title">回收管理</span>
-
-              <el-menu-item index="/home/recycleMsg">回收信息</el-menu-item>
-            </el-submenu>
-            <el-submenu index="1-5">
-              <span slot="title">开锁服务</span>
-              <el-menu-item index="/home/lockPeople">合作公司</el-menu-item>
-            </el-submenu>
+            <el-menu-item-group>
+              <el-menu-item index="/home/house">教练预约</el-menu-item>
+            </el-menu-item-group>
+            <el-menu-item-group>
+              <el-menu-item index="/home/house">课程预约</el-menu-item>
+            </el-menu-item-group>
+            <el-menu-item-group>
+              <el-menu-item index="/home/house">场地预约</el-menu-item>
+            </el-menu-item-group>
           </el-submenu>
           <el-submenu index="3">
             <template slot="title">
               <i class="el-icon-coin"></i>
-              <span slot="title">收费管理</span>
+              <span slot="title">咨询管理</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="/home/waterMoney">水费账单</el-menu-item>
+              <el-menu-item index="/home/waterMoney">动态管理</el-menu-item>
             </el-menu-item-group>
             <el-menu-item-group>
-              <el-menu-item index="/home/energyMoney">电费账单</el-menu-item>
-            </el-menu-item-group>
-            <el-menu-item-group>
-              <el-menu-item index="/home/gasMoney">气费账单</el-menu-item>
-            </el-menu-item-group>
-            <el-menu-item-group>
-              <el-menu-item index="/home/serveMoney">物业费账单</el-menu-item>
+              <el-menu-item index="/home/energyMoney">场地预约</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="4">
