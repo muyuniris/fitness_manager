@@ -35,7 +35,7 @@ export default {
 
       // *********************登录******************************
 
-      this.axios.post("http://localhost:3000/users/login", {
+      this.axios.post("/users/login", {
         name: this.username,
         pwd: newPass
       })

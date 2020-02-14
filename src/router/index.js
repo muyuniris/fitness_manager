@@ -27,6 +27,14 @@ const routes = [
           auth: true
         }
       },
+      {
+        path:'vip',
+        name:'Dash',
+        component:() => import('../views/Vip.vue'),
+        meta: {
+          auth: true
+        }
+      }
     ]
   }
 ]

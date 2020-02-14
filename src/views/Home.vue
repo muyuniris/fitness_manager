@@ -8,8 +8,8 @@
           @open="handleOpen"
           @close="handleClose"
           :collapse="isCollapse"
-          background-color="#20242C"
-          active-text-color="#fff"
+          background-color="#545C64"
+          active-text-color="#FFD04B"
           text-color="#fff"
           :unique-opened="true"
           :router="true"
@@ -22,11 +22,11 @@
           </el-menu-item>
           <el-submenu index="1">
             <template slot="title">
-              <i class="el-icon-office-building"></i>
+              <i class="el-icon-s-data"></i>
               <span slot="title">基础档案</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="/home/house">会员档案</el-menu-item>
+              <el-menu-item index="/home/vip">会员档案</el-menu-item>
             </el-menu-item-group>
             <el-menu-item-group>
               <el-menu-item index="/home/host">教练档案</el-menu-item>
@@ -40,7 +40,7 @@
           </el-submenu>
           <el-submenu index="2">
             <template slot="title">
-              <i class="el-icon-brush"></i>
+              <i class="el-icon-s-order"></i>
               <span slot="title">预约管理</span>
             </template>
             <el-menu-item-group>
@@ -55,34 +55,20 @@
           </el-submenu>
           <el-submenu index="3">
             <template slot="title">
-              <i class="el-icon-coin"></i>
-              <span slot="title">咨询管理</span>
+              <i class="el-icon-s-comment"></i>
+              <span slot="title">资讯管理</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="/home/waterMoney">动态管理</el-menu-item>
+              <el-menu-item index="/home/waterMoney">用户</el-menu-item>
             </el-menu-item-group>
             <el-menu-item-group>
-              <el-menu-item index="/home/energyMoney">场地预约</el-menu-item>
+              <el-menu-item index="/home/energyMoney"></el-menu-item>
             </el-menu-item-group>
           </el-submenu>
+
           <el-submenu index="4">
             <template slot="title">
-              <i class="el-icon-school"></i>
-              <span slot="title">社区运营</span>
-            </template>
-            <el-menu-item-group>
-              <el-menu-item index="/home/Notice">社区公告</el-menu-item>
-            </el-menu-item-group>
-            <el-menu-item-group>
-              <el-menu-item index="/home/activity">社区活动</el-menu-item>
-            </el-menu-item-group>
-            <el-menu-item-group>
-              <el-menu-item index="/home/info">社区资讯</el-menu-item>
-            </el-menu-item-group>
-          </el-submenu>
-          <el-submenu index="5">
-            <template slot="title">
-              <i class="el-icon-collection-tag"></i>
+              <i class="el-icon-s-platform"></i>
               <span slot="title">平台管理</span>
             </template>
             <el-menu-item-group>
@@ -222,7 +208,7 @@ export default {
 }
 .open-btn {
   color: white;
-  background: #0093FF;
+  background: #FFD04B;
   padding: 5px 10px;
   border-radius: 2px;
   border: none;
