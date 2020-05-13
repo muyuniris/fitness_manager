@@ -9,6 +9,11 @@ import './assets/css/resize.css';
 import vueAxios from 'vue-axios';
 import http from './utils/http';
 import axios from 'axios';
+// import ECharts from 'vue-echarts'
+
+
+
+
 
 
 Vue.use(ElementUI);

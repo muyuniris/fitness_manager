@@ -3,23 +3,31 @@
       <!-- 标题 -->
       <div class="title">
         <i class="el-icon-document-copy"></i>
-        用户列表
+        意见列表
       </div>
       <!-- 筛选数据的输入表单 -->
       <div class="choose">
         <el-form :inline="true" :model="search" class="demo-form-inline" size="small">
-          <el-form-item label="姓名">
-            <el-input v-model="search.name" placeholder="请输入姓名"></el-input>
+          <el-form-item label="标题:">
+            <el-input v-model="search.title" placeholder="请输入公告标题"></el-input>
           </el-form-item>
-          <el-form-item label="预留手机号">
-            <el-input v-model="search.tel" placeholder="请输入预留手机号"></el-input>
+          <el-form-item label="发布时间:">
+             <el-date-picker
+                v-model="search.time"
+                value-format="yyyy-MM-dd"
+                type="daterange"
+                align="right"
+                unlink-panels
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期">
+              </el-date-picker>
           </el-form-item>
         </el-form>
       </div>
 
       <!-- 新增和搜索按钮 -->
       <div class="btn" style="text-align:right;margin-right:30px">
-        <!-- <el-button icon="el-icon-upload" class="btn-exclude" @click="exclude">导出报表</el-button> -->
         <el-button icon="el-icon-plus" class="btn-add" @click="add">新增</el-button>
         <el-button icon="el-icon-search" class="btn-search" @click="searchMsg">搜素</el-button>
       </div>
@@ -27,28 +35,23 @@
       <!-- 表格数据 -->
       <div class="mytable">
         <el-table :data="data" border style="width: 100%" v-loading="loading">
-          <el-table-column prop="no" label="用户编号"></el-table-column>
-          <el-table-column prop="name" label="用户名称"></el-table-column>
-          <el-table-column prop="tel" label="预留手机号"></el-table-column>
-          <el-table-column prop="sex" label="性别"></el-table-column>
-          <el-table-column prop="age" label="年龄"></el-table-column>
-          <el-table-column prop="type" label="用户性质"></el-table-column>
-          <el-table-column prop="lock" label="账号状态"></el-table-column>
+          <el-table-column prop="no" label="公告编号"></el-table-column>
+          <el-table-column prop="title" label="标题"></el-table-column>
+          <el-table-column prop="subContent" label="内容" width="300px"></el-table-column>
+          <el-table-column prop="time" label="发布时间"></el-table-column>
           <!-- 相关操作按钮 -->
           <el-table-column label="操作" align="center">
             <template slot-scope="scope">
               <el-button type="primary" icon="el-icon-search" size="mini" class="btn-show" @click="show(scope.row.id)" title="查看详情"></el-button>
               <el-button type="info" icon="el-icon-edit-outline" size="mini" class="btn-alter" @click="alter(scope.row.id)" title="编辑"></el-button>
-              <el-button type="danger" icon="el-icon-lock" size="mini" class="btn-lock" @click="lock(scope.row.uid,0)" title="解除" v-show="scope.row.lock=='禁用'"></el-button>
-              <el-button type="info" icon="el-icon-unlock" size="mini" class="btn-unlock" @click="lock(scope.row.uid,1)" title="禁用" v-show="scope.row.lock!='禁用'"></el-button>
+              <el-button type="danger" icon="el-icon-delete" size="mini" class="btn-del" @click="del(scope.row.id)" title="删除"></el-button>
             </template>
           </el-table-column>
         </el-table>
 
         <!-- 分页 -->
         <div class="clearfix" v-show="!loading"><el-pagination background layout="prev, pager, next" :page-size="pageSize" :total="total" :pager-count="5" :hide-on-single-page="true" @current-change="changePage" class="page" :current-page="currentPage"></el-pagination></div>
-      </div>
-      
+      </div>     
     </div>
 </template>
 <script>
@@ -60,15 +63,14 @@ export default {
       currentPage:1,//记录当前页
       pageSize:5,
       total:0,
-      search: {},//记录筛选的数据项
-      data:[]//表单所以数据
+      search: {
+        time:['','']
+      },//记录筛选的数据项
+      data:[],//表单所以数据
+      detail:{}
     };
   },
   methods: {
-    //新增
-    add(){
-      this.$router.push({path:'/home/addvip'});
-    },
 
     // 搜索
     searchMsg(){
@@ -79,15 +81,14 @@ export default {
 
     //查看
     show(id){
-      console.log("查看",id);
-      this.$router.push({path:'/home/showvip/'+id});
+      this.$router.push({path:'/home/showNotice/'+id});
     },
-
-    //修改
     alter(id){
-      this.$router.push({path:'/home/altervip/'+id});
+      this.$router.push({path:'/home/alterNotice/'+id});
     },
-
+    add(){
+      this.$router.push({path:'/home/addNotice'});
+    },
     //改变页码
     changePage(val){
       this.currentPage=val;
@@ -109,63 +110,20 @@ export default {
       return (Array(n).join(0) + num).slice(-n);
     },
 
-    // 通过生日获取年龄
-    GetAge(strBirthday){       
-      var returnAge,
-      strBirthdayArr=strBirthday.split("-"),
-      birthYear = strBirthdayArr[0],
-      birthMonth = strBirthdayArr[1],
-      birthDay = strBirthdayArr[2],  
-      d = new Date(),
-      nowYear = d.getFullYear(),
-      nowMonth = d.getMonth() + 1,
-      nowDay = d.getDate();   
-      if(nowYear == birthYear){
-        returnAge = 0;//同年 则为0周岁
-      }
-      else{
-        var ageDiff = nowYear - birthYear ; //年之差
-        if(ageDiff > 0){
-          if(nowMonth == birthMonth) {
-            var dayDiff = nowDay - birthDay;//日之差
-            if(dayDiff < 0) {
-              returnAge = ageDiff - 1;
-            }else {
-              returnAge = ageDiff;
-            }
-          }else {
-            var monthDiff = nowMonth - birthMonth;//月之差
-            if(monthDiff < 0) {
-              returnAge = ageDiff - 1;
-            }
-            else {
-              returnAge = ageDiff ;
-            }
-          }
-        }else {
-          returnAge = -1;//返回-1 表示出生日期输入错误 晚于今天
-        }
-      } 
-      return returnAge;//返回周岁年龄
-    },
-
     // 格式化数据
     fomateData(list){
       var arr=[];
       if(list){
         for(var i= 0;i<list.length;i++){
           var item={};
-          item.id=list[i].v_id;
-          item.uid=list[i].u_id;
-          item.no=this.PrefixInteger(list[i].v_id,10);
-          item.name = list[i].v_name;
-          item.tel = list[i].u_tel;
-          item.age =  list[i].v_birth?this.GetAge(this.switchTimeFormat(list[i].v_birth)):'待完善';
-          item.sex = list[i].v_sex?'女':'男';
-          item.type = list[i].v_state==1?'会员':'非会员';
-          item.lock = list[i].u_lock==1?'禁用':'正常'
+          item.id=list[i].n_id;
+          item.no=this.PrefixInteger(list[i].n_id,10);
+          item.title = list[i].n_title;
+          item.time = this.switchTimeFormat(list[i].n_time)
+          item.content = list[i].n_msg;
+          item.subContent = item.content.length<15?item.content:item.content.substring(0,15)+'......'
           arr.push(item);
-        }
+        }  
       }
       return arr;
     },
@@ -173,16 +131,21 @@ export default {
     // 获取数据
     load(){
       this.loading=true;
+      console.log(this.search)
+      if(!this.search.time){
+        this.search.time=['','']
+      }
       // **************************************获取数据请求*********************************************
-      this.axios.post("/vip/getData",{
+      this.axios.post("/notify/getData",{
         currentPage: this.currentPage,
         pageSize: this.pageSize,
-        name: this.search.name,
-        tel: this.search.tel
+        title: this.search.title,
+        startTime: this.search.time[0],
+        endTime:this.search.time[1]
       })
       .then(res => {
-        console.log("获取到数据",res.data.data);
-        this.data=this.fomateData(res.data.data.list)
+        console.log("获取到数据",res.data);
+        this.data=this.fomateData(res.data.data.list);
         this.total = res.data.data.count;
         this.loading = false;
       })
@@ -191,23 +154,36 @@ export default {
       });
     },
 
-    // 禁用和解除
-    lock(id,status){
-      console.log("当前状态",id,status)
-      this.axios.post('/users/lock',{
-        id:id,
-        lock:status
-      })
-      .then(res=>{
-        console.log(res.data);
-        if(res.data.code=='200'){
-          this.load();
-        }
-      })
-      .catch(err=>{
-        console.log(err);
-      })
-    }
+    // 删除
+    del(id){
+      console.log("当前状态",id);
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.axios.post('/notify/del',{
+          id:id
+        })
+        .then(res=>{
+          if(res.data.code=='200'){
+            this.load();
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+          }
+        })
+        .catch(err=>{
+          console.log(err)
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });          
+      });
+    },
 
   },
   created(){
@@ -316,12 +292,5 @@ export default {
 .btn-show{
   background:@greenColor;
 }
-.btn-lock{
-  background:@redColor;
-  border-color:@redColor;
-}
-.btn-unlock{
-  background:@yellowColor;
-  border-color:@yellowColor;
-}
+
 </style>

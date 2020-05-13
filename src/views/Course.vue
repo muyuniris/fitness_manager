@@ -3,16 +3,13 @@
       <!-- 标题 -->
       <div class="title">
         <i class="el-icon-document-copy"></i>
-        用户列表
+        课程列表
       </div>
       <!-- 筛选数据的输入表单 -->
       <div class="choose">
         <el-form :inline="true" :model="search" class="demo-form-inline" size="small">
-          <el-form-item label="姓名">
-            <el-input v-model="search.name" placeholder="请输入姓名"></el-input>
-          </el-form-item>
-          <el-form-item label="预留手机号">
-            <el-input v-model="search.tel" placeholder="请输入预留手机号"></el-input>
+          <el-form-item label="课程名:">
+            <el-input v-model="search.name" placeholder="请输入课程名"></el-input>
           </el-form-item>
         </el-form>
       </div>
@@ -27,20 +24,16 @@
       <!-- 表格数据 -->
       <div class="mytable">
         <el-table :data="data" border style="width: 100%" v-loading="loading">
-          <el-table-column prop="no" label="用户编号"></el-table-column>
-          <el-table-column prop="name" label="用户名称"></el-table-column>
-          <el-table-column prop="tel" label="预留手机号"></el-table-column>
-          <el-table-column prop="sex" label="性别"></el-table-column>
-          <el-table-column prop="age" label="年龄"></el-table-column>
-          <el-table-column prop="type" label="用户性质"></el-table-column>
-          <el-table-column prop="lock" label="账号状态"></el-table-column>
+          <el-table-column prop="no" label="课程编号"></el-table-column>
+          <el-table-column prop="name" label="课程名"></el-table-column>
+          <el-table-column prop="strong" label="课程强度"></el-table-column>
+          <el-table-column prop="info" label="课程描述" width="400px"></el-table-column>
           <!-- 相关操作按钮 -->
           <el-table-column label="操作" align="center">
             <template slot-scope="scope">
               <el-button type="primary" icon="el-icon-search" size="mini" class="btn-show" @click="show(scope.row.id)" title="查看详情"></el-button>
               <el-button type="info" icon="el-icon-edit-outline" size="mini" class="btn-alter" @click="alter(scope.row.id)" title="编辑"></el-button>
-              <el-button type="danger" icon="el-icon-lock" size="mini" class="btn-lock" @click="lock(scope.row.uid,0)" title="解除" v-show="scope.row.lock=='禁用'"></el-button>
-              <el-button type="info" icon="el-icon-unlock" size="mini" class="btn-unlock" @click="lock(scope.row.uid,1)" title="禁用" v-show="scope.row.lock!='禁用'"></el-button>
+              <el-button type="danger" icon="el-icon-delete" size="mini" class="btn-del" @click="del(scope.row.id)" title="删除"></el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -67,7 +60,7 @@ export default {
   methods: {
     //新增
     add(){
-      this.$router.push({path:'/home/addvip'});
+      this.$router.push({path:'/home/addCourse'});
     },
 
     // 搜索
@@ -80,12 +73,12 @@ export default {
     //查看
     show(id){
       console.log("查看",id);
-      this.$router.push({path:'/home/showvip/'+id});
+      this.$router.push({path:'/home/showCourse/'+id});
     },
 
     //修改
     alter(id){
-      this.$router.push({path:'/home/altervip/'+id});
+      this.$router.push({path:'/home/alterCourse/'+id});
     },
 
     //改变页码
@@ -95,58 +88,9 @@ export default {
       this.load();
     },
 
-    // 格式化时间
-    switchTimeFormat(time) {
-      const dateTime = new Date(time);
-      const year = dateTime.getFullYear();
-      const month = dateTime.getMonth() + 1;
-      const date = dateTime.getDate();
-      return `${year}-${this.PrefixInteger(month,2)}-${this.PrefixInteger(date,2)}`;
-    },
-
     // 格式化数字
     PrefixInteger(num, n) {
       return (Array(n).join(0) + num).slice(-n);
-    },
-
-    // 通过生日获取年龄
-    GetAge(strBirthday){       
-      var returnAge,
-      strBirthdayArr=strBirthday.split("-"),
-      birthYear = strBirthdayArr[0],
-      birthMonth = strBirthdayArr[1],
-      birthDay = strBirthdayArr[2],  
-      d = new Date(),
-      nowYear = d.getFullYear(),
-      nowMonth = d.getMonth() + 1,
-      nowDay = d.getDate();   
-      if(nowYear == birthYear){
-        returnAge = 0;//同年 则为0周岁
-      }
-      else{
-        var ageDiff = nowYear - birthYear ; //年之差
-        if(ageDiff > 0){
-          if(nowMonth == birthMonth) {
-            var dayDiff = nowDay - birthDay;//日之差
-            if(dayDiff < 0) {
-              returnAge = ageDiff - 1;
-            }else {
-              returnAge = ageDiff;
-            }
-          }else {
-            var monthDiff = nowMonth - birthMonth;//月之差
-            if(monthDiff < 0) {
-              returnAge = ageDiff - 1;
-            }
-            else {
-              returnAge = ageDiff ;
-            }
-          }
-        }else {
-          returnAge = -1;//返回-1 表示出生日期输入错误 晚于今天
-        }
-      } 
-      return returnAge;//返回周岁年龄
     },
 
     // 格式化数据
@@ -155,15 +99,12 @@ export default {
       if(list){
         for(var i= 0;i<list.length;i++){
           var item={};
-          item.id=list[i].v_id;
-          item.uid=list[i].u_id;
-          item.no=this.PrefixInteger(list[i].v_id,10);
-          item.name = list[i].v_name;
-          item.tel = list[i].u_tel;
-          item.age =  list[i].v_birth?this.GetAge(this.switchTimeFormat(list[i].v_birth)):'待完善';
-          item.sex = list[i].v_sex?'女':'男';
-          item.type = list[i].v_state==1?'会员':'非会员';
-          item.lock = list[i].u_lock==1?'禁用':'正常'
+          item.id=list[i].c_id;
+          item.no=this.PrefixInteger(list[i].c_id,10);
+          item.name = list[i].c_name;
+          item.strong =  list[i].c_strong;
+          item.info = list[i].c_info?list[i].c_info:'待完善';
+          item.info = item.info.length<25?item.info:item.info.substring(0,25)+'......'
           arr.push(item);
         }
       }
@@ -174,11 +115,10 @@ export default {
     load(){
       this.loading=true;
       // **************************************获取数据请求*********************************************
-      this.axios.post("/vip/getData",{
+      this.axios.post("/course/getData",{
         currentPage: this.currentPage,
         pageSize: this.pageSize,
         name: this.search.name,
-        tel: this.search.tel
       })
       .then(res => {
         console.log("获取到数据",res.data.data);
@@ -192,21 +132,34 @@ export default {
     },
 
     // 禁用和解除
-    lock(id,status){
-      console.log("当前状态",id,status)
-      this.axios.post('/users/lock',{
-        id:id,
-        lock:status
-      })
-      .then(res=>{
-        console.log(res.data);
-        if(res.data.code=='200'){
-          this.load();
-        }
-      })
-      .catch(err=>{
-        console.log(err);
-      })
+    del(id){
+      console.log("当前状态",id);
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.axios.post('/course/del',{
+          id:id
+        })
+        .then(res=>{
+          if(res.data.code=='200'){
+            this.load();
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+          }
+        })
+        .catch(err=>{
+          console.log(err)
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });          
+      });
     }
 
   },
@@ -316,12 +269,5 @@ export default {
 .btn-show{
   background:@greenColor;
 }
-.btn-lock{
-  background:@redColor;
-  border-color:@redColor;
-}
-.btn-unlock{
-  background:@yellowColor;
-  border-color:@yellowColor;
-}
+
 </style>

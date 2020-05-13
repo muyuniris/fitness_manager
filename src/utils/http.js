@@ -15,7 +15,7 @@ http.interceptors.request.use(function (config) {
   if(token) {
     // 在请求头上带上 token，固定写法
     
-    config.headers['Authorization'] = token;
+    config.headers['Authorization'] = 'Bearer ' + token;
   }
   return config;
 }, function (error) {

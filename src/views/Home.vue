@@ -20,64 +20,69 @@
               <img src="/img/logo.png" alt v-show="isCollapse" width="40px" />
             </router-link>
           </el-menu-item>
+
           <el-submenu index="1">
             <template slot="title">
-              <i class="el-icon-s-data"></i>
-              <span slot="title">基础档案</span>
+              <i class="el-icon-s-order"></i>
+              <span slot="title">课程管理</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="/home/vip">会员档案</el-menu-item>
+              <el-menu-item index="/home/course">课程档案</el-menu-item>
             </el-menu-item-group>
             <el-menu-item-group>
-              <el-menu-item index="/home/host">教练档案</el-menu-item>
+              <el-menu-item index="/home/coursePlan">课程安排</el-menu-item>
             </el-menu-item-group>
             <el-menu-item-group>
-              <el-menu-item index="/home/host">课程档案</el-menu-item>
-            </el-menu-item-group>
-            <el-menu-item-group>
-              <el-menu-item index="/home/host">场地档案</el-menu-item>
+              <el-menu-item index="/home/orderCourse">课程预约</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
+
           <el-submenu index="2">
             <template slot="title">
               <i class="el-icon-s-order"></i>
-              <span slot="title">预约管理</span>
+              <span slot="title">教练管理</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="/home/house">教练预约</el-menu-item>
+              <el-menu-item index="/home/teacher">教练档案</el-menu-item>
             </el-menu-item-group>
             <el-menu-item-group>
-              <el-menu-item index="/home/house">课程预约</el-menu-item>
-            </el-menu-item-group>
-            <el-menu-item-group>
-              <el-menu-item index="/home/house">场地预约</el-menu-item>
+              <el-menu-item index="/home/orderTeacher">教练预约</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
+
           <el-submenu index="3">
             <template slot="title">
-              <i class="el-icon-s-comment"></i>
-              <span slot="title">资讯管理</span>
+              <i class="el-icon-s-order"></i>
+              <span slot="title">场地管理</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="/home/waterMoney">用户</el-menu-item>
+              <el-menu-item index="/home/place">场地档案</el-menu-item>
             </el-menu-item-group>
             <el-menu-item-group>
-              <el-menu-item index="/home/energyMoney"></el-menu-item>
+              <el-menu-item index="/home/orderPlace">场地预约</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
 
           <el-submenu index="4">
             <template slot="title">
-              <i class="el-icon-s-platform"></i>
+              <i class="el-icon-s-data"></i>
               <span slot="title">平台管理</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="/home/user">用户管理</el-menu-item>
+              <el-menu-item index="/home/vip">用户管理</el-menu-item>
+            </el-menu-item-group>
+            
+            <el-menu-item-group>
+              <el-menu-item index="/home/role">角色档案</el-menu-item>
+            </el-menu-item-group>
+            <el-menu-item-group>
+              <el-menu-item index="/home/notice">公告管理</el-menu-item>
             </el-menu-item-group>
             <el-menu-item-group>
               <el-menu-item index="/home/suggest">意见反馈</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
+
         </el-menu>
     
       </el-aside>
@@ -145,20 +150,13 @@ export default {
       this.$router.push({ path: "/home/myData" });
     },
     logout() {
-      sessionStorage.clear();
-      this.axios
-      .post("/user/logout", {})
-      .then(res => {
-        console.log(res);
-      })
-      .catch(err => {
-        console.log(err);
-      });
+      sessionStorage.removeItem('token')
       this.$router.replace({ path: "/login" });
 
     }
   },
   created() {
+    
     this.user.id = sessionStorage.getItem("userId");
     this.user.name=sessionStorage.getItem("userName");
     this.user.role=sessionStorage.getItem("userRole");

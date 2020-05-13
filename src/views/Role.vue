@@ -3,7 +3,7 @@
       <!-- 标题 -->
       <div class="title">
         <i class="el-icon-document-copy"></i>
-        用户列表
+        管理员列表
       </div>
       <!-- 筛选数据的输入表单 -->
       <div class="choose">
@@ -13,6 +13,13 @@
           </el-form-item>
           <el-form-item label="预留手机号">
             <el-input v-model="search.tel" placeholder="请输入预留手机号"></el-input>
+          </el-form-item>
+          <el-form-item label="管理员类别">
+            <el-select v-model="search.type" placeholder="请选择活动区域">
+              <el-option label="全部" value=""></el-option>
+              <el-option label="普通管理员" value="0"></el-option>
+              <el-option label="超级管理员" value="1"></el-option>
+            </el-select>
           </el-form-item>
         </el-form>
       </div>
@@ -27,17 +34,14 @@
       <!-- 表格数据 -->
       <div class="mytable">
         <el-table :data="data" border style="width: 100%" v-loading="loading">
-          <el-table-column prop="no" label="用户编号"></el-table-column>
-          <el-table-column prop="name" label="用户名称"></el-table-column>
-          <el-table-column prop="tel" label="预留手机号"></el-table-column>
-          <el-table-column prop="sex" label="性别"></el-table-column>
-          <el-table-column prop="age" label="年龄"></el-table-column>
-          <el-table-column prop="type" label="用户性质"></el-table-column>
+          <el-table-column prop="no" label="编号"></el-table-column>
+          <el-table-column prop="name" label="姓名"></el-table-column>
+          <el-table-column prop="tel" label="手机号"></el-table-column>
+          <el-table-column prop="type" label="类别"></el-table-column>
           <el-table-column prop="lock" label="账号状态"></el-table-column>
           <!-- 相关操作按钮 -->
           <el-table-column label="操作" align="center">
             <template slot-scope="scope">
-              <el-button type="primary" icon="el-icon-search" size="mini" class="btn-show" @click="show(scope.row.id)" title="查看详情"></el-button>
               <el-button type="info" icon="el-icon-edit-outline" size="mini" class="btn-alter" @click="alter(scope.row.id)" title="编辑"></el-button>
               <el-button type="danger" icon="el-icon-lock" size="mini" class="btn-lock" @click="lock(scope.row.uid,0)" title="解除" v-show="scope.row.lock=='禁用'"></el-button>
               <el-button type="info" icon="el-icon-unlock" size="mini" class="btn-unlock" @click="lock(scope.row.uid,1)" title="禁用" v-show="scope.row.lock!='禁用'"></el-button>
@@ -67,7 +71,7 @@ export default {
   methods: {
     //新增
     add(){
-      this.$router.push({path:'/home/addvip'});
+      this.$router.push({path:'/home/addRole'});
     },
 
     // 搜索
@@ -77,15 +81,9 @@ export default {
       this.load();
     },
 
-    //查看
-    show(id){
-      console.log("查看",id);
-      this.$router.push({path:'/home/showvip/'+id});
-    },
-
     //修改
     alter(id){
-      this.$router.push({path:'/home/altervip/'+id});
+      this.$router.push({path:'/home/alterRole/'+id});
     },
 
     //改变页码
@@ -95,14 +93,6 @@ export default {
       this.load();
     },
 
-    // 格式化时间
-    switchTimeFormat(time) {
-      const dateTime = new Date(time);
-      const year = dateTime.getFullYear();
-      const month = dateTime.getMonth() + 1;
-      const date = dateTime.getDate();
-      return `${year}-${this.PrefixInteger(month,2)}-${this.PrefixInteger(date,2)}`;
-    },
 
     // 格式化数字
     PrefixInteger(num, n) {
@@ -155,14 +145,12 @@ export default {
       if(list){
         for(var i= 0;i<list.length;i++){
           var item={};
-          item.id=list[i].v_id;
+          item.id=list[i].m_id;
           item.uid=list[i].u_id;
-          item.no=this.PrefixInteger(list[i].v_id,10);
-          item.name = list[i].v_name;
+          item.no=this.PrefixInteger(list[i].m_id,10);
+          item.name = list[i].m_name;
           item.tel = list[i].u_tel;
-          item.age =  list[i].v_birth?this.GetAge(this.switchTimeFormat(list[i].v_birth)):'待完善';
-          item.sex = list[i].v_sex?'女':'男';
-          item.type = list[i].v_state==1?'会员':'非会员';
+          item.type = list[i].m_role==1?'超级管理员':'普通管理员';
           item.lock = list[i].u_lock==1?'禁用':'正常'
           arr.push(item);
         }
@@ -174,11 +162,12 @@ export default {
     load(){
       this.loading=true;
       // **************************************获取数据请求*********************************************
-      this.axios.post("/vip/getData",{
+      this.axios.post("/role/getData",{
         currentPage: this.currentPage,
         pageSize: this.pageSize,
         name: this.search.name,
-        tel: this.search.tel
+        tel: this.search.tel,
+        type: this.search.type
       })
       .then(res => {
         console.log("获取到数据",res.data.data);

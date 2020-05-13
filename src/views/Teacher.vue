@@ -3,7 +3,7 @@
       <!-- 标题 -->
       <div class="title">
         <i class="el-icon-document-copy"></i>
-        用户列表
+        教练列表
       </div>
       <!-- 筛选数据的输入表单 -->
       <div class="choose">
@@ -27,20 +27,20 @@
       <!-- 表格数据 -->
       <div class="mytable">
         <el-table :data="data" border style="width: 100%" v-loading="loading">
-          <el-table-column prop="no" label="用户编号"></el-table-column>
-          <el-table-column prop="name" label="用户名称"></el-table-column>
+          <el-table-column prop="no" label="教练编号"></el-table-column>
+          <el-table-column prop="name" label="姓名"></el-table-column>
           <el-table-column prop="tel" label="预留手机号"></el-table-column>
           <el-table-column prop="sex" label="性别"></el-table-column>
           <el-table-column prop="age" label="年龄"></el-table-column>
-          <el-table-column prop="type" label="用户性质"></el-table-column>
-          <el-table-column prop="lock" label="账号状态"></el-table-column>
+          <el-table-column prop="rate" label="评分"></el-table-column>
           <!-- 相关操作按钮 -->
           <el-table-column label="操作" align="center">
             <template slot-scope="scope">
               <el-button type="primary" icon="el-icon-search" size="mini" class="btn-show" @click="show(scope.row.id)" title="查看详情"></el-button>
               <el-button type="info" icon="el-icon-edit-outline" size="mini" class="btn-alter" @click="alter(scope.row.id)" title="编辑"></el-button>
-              <el-button type="danger" icon="el-icon-lock" size="mini" class="btn-lock" @click="lock(scope.row.uid,0)" title="解除" v-show="scope.row.lock=='禁用'"></el-button>
-              <el-button type="info" icon="el-icon-unlock" size="mini" class="btn-unlock" @click="lock(scope.row.uid,1)" title="禁用" v-show="scope.row.lock!='禁用'"></el-button>
+              <el-button type="info" icon="el-icon-delete" size="mini" class="btn-lock" @click="del(scope.row.id)" title="删除"></el-button>
+              <el-button type="danger" icon="el-icon-lock" size="mini" class="btn-lock" @click="lock(scope.row.uid,0)" title="解除" v-show="scope.row.lock"></el-button>
+              <el-button type="info" icon="el-icon-unlock" size="mini" class="btn-unlock" @click="lock(scope.row.uid,1)" title="禁用" v-show="!scope.row.lock"></el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -65,11 +65,21 @@ export default {
     };
   },
   methods: {
+    del(id){
+      this.axios.post('/teacher/del',{
+        id:id
+      })
+      .then(res=>{
+        console.log(res.data);
+        if(res.code=='200'){
+          this.load();
+        }
+      })
+    },
     //新增
     add(){
-      this.$router.push({path:'/home/addvip'});
+      this.$router.push({path:'/home/addTeacher'});
     },
-
     // 搜索
     searchMsg(){
       console.log("搜索",this.search);
@@ -80,12 +90,12 @@ export default {
     //查看
     show(id){
       console.log("查看",id);
-      this.$router.push({path:'/home/showvip/'+id});
+      this.$router.push({path:'/home/showTeacher/'+id});
     },
 
     //修改
     alter(id){
-      this.$router.push({path:'/home/altervip/'+id});
+      this.$router.push({path:'/home/alterTeacher/'+id});
     },
 
     //改变页码
@@ -155,15 +165,15 @@ export default {
       if(list){
         for(var i= 0;i<list.length;i++){
           var item={};
-          item.id=list[i].v_id;
+          item.id=list[i].t_id;
           item.uid=list[i].u_id;
-          item.no=this.PrefixInteger(list[i].v_id,10);
-          item.name = list[i].v_name;
+          item.no=this.PrefixInteger(list[i].t_id,10);
+          item.name = list[i].t_name;
           item.tel = list[i].u_tel;
-          item.age =  list[i].v_birth?this.GetAge(this.switchTimeFormat(list[i].v_birth)):'待完善';
-          item.sex = list[i].v_sex?'女':'男';
-          item.type = list[i].v_state==1?'会员':'非会员';
-          item.lock = list[i].u_lock==1?'禁用':'正常'
+          item.age =  list[i].t_birth?this.GetAge(this.switchTimeFormat(list[i].t_birth)):'待完善';
+          item.sex = list[i].t_sex?'女':'男';
+          item.rate = list[i].t_rate?list[i].t_rate:0;
+          item.lock = list[i].u_lock;
           arr.push(item);
         }
       }
@@ -172,9 +182,10 @@ export default {
 
     // 获取数据
     load(){
+      console.log("获取数据")
       this.loading=true;
       // **************************************获取数据请求*********************************************
-      this.axios.post("/vip/getData",{
+      this.axios.post("/teacher/getData",{
         currentPage: this.currentPage,
         pageSize: this.pageSize,
         name: this.search.name,

@@ -5,7 +5,7 @@
         <img src="/img/logo_small.png" alt />
       </div>
       <div class="login-item">
-        <input type="text" name="username" placeholder="用户名" v-model="username"/>
+        <input type="text" name="username" placeholder="手机号" v-model="username"/>
       </div>
       <div class="login-item">
         <input type="password" name="password" placeholder="密码" v-model="password"/>
@@ -35,29 +35,27 @@ export default {
 
       // *********************登录******************************
 
-      this.axios.post("/users/login", {
-        name: this.username,
+      this.axios.post("/users/managerLogin", {
+        tel: this.username,
         pwd: newPass
       })
       .then((res) => {
         console.log(res)
         if(res.data.code == "200") {
 
-          // 保存token
           var token = res.data.data.token;
+          var userId = res.data.data.userId;
           sessionStorage.setItem("token", token);
-          sessionStorage.setItem('userId',res.data.data.userId);
-
-
-          //获取参数（未登录时想访问的路由）
+          sessionStorage.setItem("uid",userId);
+          console.log("收到的token",token);
+          // 获取参数（未登录时想访问的路由）
           var url = this.$route.query.redirect;
-
-          url = url ? url : "/home"
+          console.log(url);
+          url = url ? url : "/home";
           // 切换路由
-          this.$router.replace(url)
+          this.$router.replace(url);
         } else {
-          console.log(res.data.message);
-          this.$message.error(res.data.message);
+          this.$message.error(res.data.msg);
         }
       })
       .catch(err=> {
@@ -76,7 +74,7 @@ export default {
   position: fixed;
   width: 100%;
   height: 100%;
-  background: url('/img/login-bg.png') center;
+  background: url('/img/bg.jpg') center;
   background-size: cover;
 }
 
@@ -86,7 +84,7 @@ export default {
   left: 50%;
   top: 50%;
   transform: translate(-50%,-50%);
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 5px;
   padding: 10px;
 }
@@ -106,7 +104,8 @@ export default {
   height: 45px;
   border-radius: 3px;
   width: 360px;
-  border: 1px solid #ddd;
+  // background: rgba(255, 255, 255, 0.15);
+  border: none;
   padding: 0 5px;
 }
 .login-item .login-btn{
