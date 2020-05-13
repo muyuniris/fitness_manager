@@ -3,7 +3,6 @@
     <el-container>
       <el-aside :width="navWidth" style="transition: 0.3s ease-in-out;">
         <el-menu
-          v-if="user.role=='超级管理员'"
           class="el-menu-vertical-demo"
           @open="handleOpen"
           @close="handleClose"
@@ -72,7 +71,7 @@
               <el-menu-item index="/home/vip">用户管理</el-menu-item>
             </el-menu-item-group>
             
-            <el-menu-item-group>
+            <el-menu-item-group v-show="user.role=='超级管理员'">
               <el-menu-item index="/home/role">角色档案</el-menu-item>
             </el-menu-item-group>
             <el-menu-item-group>
@@ -145,6 +144,17 @@ export default {
         this.navWidth = "200px";
       }
     },
+    formatData(data){
+      var item = {};
+      console.log(data)
+      item.id = data.m_id;
+      item.uid = data.u_id;
+      item.name = data.m_name;
+      item.tel = data.u_tel;
+      item.role = data.m_role?"超级管理员":"普通管理员";
+      item.lock = data.u_lock?"禁用":"正常";
+      return item;
+    },
     mydata() {
       console.log("aaa");
       this.$router.push({ path: "/home/myData" });
@@ -156,11 +166,24 @@ export default {
     }
   },
   created() {
-    
-    this.user.id = sessionStorage.getItem("userId");
-    this.user.name=sessionStorage.getItem("userName");
-    this.user.role=sessionStorage.getItem("userRole");
-    this.user.role="超级管理员"
+    var uid = sessionStorage.getItem("uid");
+    this.axios.post("/role/getDetail",{
+      id:uid
+    })
+    .then(res=>{
+      console.log(res.data);
+      if(res.data.code == '200'){
+        this.loading=false;
+        this.user= this.formatData(res.data.data);
+      }
+    })
+    .catch(err=>{
+      console.log(err);
+    })
+    // this.user.id = sessionStorage.getItem("userId");
+    // this.user.name=sessionStorage.getItem("userName");
+    // this.user.role=sessionStorage.getItem("userRole");
+    // this.user.role="超级管理员"
   }
 };
 
